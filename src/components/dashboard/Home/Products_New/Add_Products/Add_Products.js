@@ -32,7 +32,8 @@ export default class Add_Products extends Component {
         list1: list,
         list2: list2,
         showInputFields: false,
-        populateFields: false,
+        // populateFields: false,
+        
         stagedProduct: [],
         fields: [],
         fieldsObjArr: [],
@@ -53,6 +54,7 @@ export default class Add_Products extends Component {
             "MPN": "mpn",
             "ISBN": "isbn"
         },
+        addUnitPopup:false
     };
 
     addMore = () => {
@@ -87,6 +89,10 @@ export default class Add_Products extends Component {
             fieldsObjArr.push(obj)
             this.setState({ fieldsObjArr })
         })
+    }
+
+    addUnitPopup(){
+        this.setState({addUnitPopup : true })
     }
 
     onChecked(id) {
@@ -143,9 +149,16 @@ export default class Add_Products extends Component {
         this.state.addingNewFields = []
     }
 
+    changeHandler = (index,key,e) => {
+        let { fieldsObjArr } = this.state;
+        fieldsObjArr[index][key] = e
+        this.setState({ ...fieldsObjArr });
+    };
+    
     render() {
-
-        const { checkBox1, list1, showInputFields, fieldsObjArr } = this.state
+        
+        const { checkBox1, addUnitPopup, list1, showInputFields, fieldsObjArr } = this.state
+        console.log(fieldsObjArr)
 
         return (
             <View>
@@ -164,6 +177,8 @@ export default class Add_Products extends Component {
                                                     <TextInput placeholder={key}
                                                         key={i}
                                                         // onChange={(text)=> this.handleInputChange(key, text)}
+                                                        // value={key} 
+                                                        onChangeText={(e) => this.changeHandler(index,key,e)}
                                                         style={customStyles.inputBox} />
                                                 </>
                                             )
@@ -171,7 +186,7 @@ export default class Add_Products extends Component {
 
                                         <View style={styles.innerContainer}>
 
-                                            <View style={customStyles.centerView}>
+                                            {/* <View style={customStyles.centerView}>
                                                 <Text style={{ width: '70%' }}>- Tablet - Rs 2 - Cfactor 1</Text>
                                                 <Text style={[customStyles.draft_complete_box, styles.smallest_pink]}>Smallest</Text>
                                             </View>
@@ -179,9 +194,9 @@ export default class Add_Products extends Component {
                                             <View style={customStyles.centerView}>
                                                 <Text style={{ width: '70%' }}>- Tablet - Rs 2 - Cfactor 1</Text>
                                                 <Text style={[customStyles.draft_complete_box, styles.smallest_white]}>Smallest</Text>
-                                            </View>
+                                            </View> */}
 
-                                            <Text style={[customStyles.draft_complete_box, styles.add_unit]}>+ Add Unit</Text>
+                                            <Text style={[customStyles.draft_complete_box, styles.add_unit]} onPress={this.addUnitPopup}>+ Add Unit</Text>
                                         </View>
 
                                     </View>
@@ -217,52 +232,6 @@ export default class Add_Products extends Component {
                                     </View>
 
                                 </View>
-
-                                {/* <Modal transparent={true}> */}
-                                {/* <View style={customStyles.genericTransparentModal} > */}
-                                <View style={customStyles.genericModalBox}>
-                                    <View style={{ paddingHorizontal: 22, paddingVertical: 32, gap: 15 }}>
-                                        {
-                                            list2.map((item, key) => {
-                                                if (item.checked === true) {
-                                                    return (
-                                                        <View style={[customStyles.checkBoxContainer, { justifyContent: "space-between", flexDirection: "row", paddingHorizontal: 10 }]}>
-                                                            <TouchableOpacity key={key} style={{ flexDirection: "row", alignItems: "center", gap: 10 }} onPress={() => { this.onChecked2(item.id) }} activeOpacity={.7}>
-                                                                <Checkbox value={item.checked} style={{ borderRadius: 4 }} onValueChange={() => { this.onChecked2(item.id) }} />
-                                                                <Text>{item.valueDark}</Text>
-                                                                <Text>{item.valueLight}</Text>
-                                                            </TouchableOpacity>
-                                                            <TextInput style={[customStyles.inputBox, { borderWidth: 1, maxWidth: 100 }]} placeholder={item.valueDark} />
-                                                        </View>
-                                                    )
-                                                } else {
-                                                    return (
-                                                        <View style={[customStyles.checkBoxContainer, { justifyContent: "space-between", flexDirection: "row", paddingHorizontal: 10 }]}>
-                                                            <TouchableOpacity key={key} style={{ flexDirection: "row", alignItems: "center", gap: 10 }} onPress={() => { this.onChecked2(item.id) }} activeOpacity={.7}>
-                                                                <Checkbox value={item.checked} style={{ borderRadius: 4 }} onValueChange={() => { this.onChecked2(item.id) }} />
-                                                                <Text>{item.valueDark}</Text>
-                                                                <Text>{item.valueLight}</Text>
-                                                            </TouchableOpacity>
-                                                        </View>
-
-                                                    )
-                                                }
-
-                                            })
-                                        }
-                                    </View>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <TouchableOpacity style={[customStyles.genericModalBtn, { backgroundColor: '#EDF2F3', borderBottomStartRadius: 8, }]}
-                                            activeOpacity={0.7} >
-                                            <Text style={[customStyles.genericModalBtnText, { color: "#3C3C3C" }]}>Cancel</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={[customStyles.genericModalBtn, { backgroundColor: '#1CBC9B', borderBottomEndRadius: 8, }]} activeOpacity={0.7}>
-                                            <Text style={[customStyles.genericModalBtnText, { color: "#FFFFFF" }]}>Done</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                                {/* </View> */}
-                                {/* </Modal> */}
                             </>
                         )
                     }
@@ -330,6 +299,55 @@ export default class Add_Products extends Component {
                                 </View>
                             </Modal>
                         ) : null
+                    }
+                    {
+                        addUnitPopup === true ?(
+                            <Modal transparent={true}>
+                            <View style={customStyles.genericTransparentModal} >
+                            <View style={customStyles.genericModalBox}>
+                                <View style={{ paddingHorizontal: 22, paddingVertical: 32, gap: 15 }}>
+                                    {
+                                        list2.map((item, key) => {
+                                            if (item.checked === true) {
+                                                return (
+                                                    <View style={[customStyles.checkBoxContainer, { justifyContent: "space-between", flexDirection: "row", paddingHorizontal: 10 }]}>
+                                                        <TouchableOpacity key={key} style={{ flexDirection: "row", alignItems: "center", gap: 10 }} onPress={() => { this.onChecked2(item.id) }} activeOpacity={.7}>
+                                                            <Checkbox value={item.checked} style={{ borderRadius: 4 }} onValueChange={() => { this.onChecked2(item.id) }} />
+                                                            <Text>{item.valueDark}</Text>
+                                                            <Text>{item.valueLight}</Text>
+                                                        </TouchableOpacity>
+                                                        <TextInput style={[customStyles.inputBox, { borderWidth: 1, maxWidth: 100 }]} placeholder={item.valueDark} />
+                                                    </View>
+                                                )
+                                            } else {
+                                                return (
+                                                    <View style={[customStyles.checkBoxContainer, { justifyContent: "space-between", flexDirection: "row", paddingHorizontal: 10 }]}>
+                                                        <TouchableOpacity key={key} style={{ flexDirection: "row", alignItems: "center", gap: 10 }} onPress={() => { this.onChecked2(item.id) }} activeOpacity={.7}>
+                                                            <Checkbox value={item.checked} style={{ borderRadius: 4 }} onValueChange={() => { this.onChecked2(item.id) }} />
+                                                            <Text>{item.valueDark}</Text>
+                                                            <Text>{item.valueLight}</Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+
+                                                )
+                                            }
+
+                                        })
+                                    }
+                                </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <TouchableOpacity style={[customStyles.genericModalBtn, { backgroundColor: '#EDF2F3', borderBottomStartRadius: 8, }]}
+                                        activeOpacity={0.7} >
+                                        <Text style={[customStyles.genericModalBtnText, { color: "#3C3C3C" }]}>Cancel</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={[customStyles.genericModalBtn, { backgroundColor: '#1CBC9B', borderBottomEndRadius: 8, }]} activeOpacity={0.7}>
+                                        <Text style={[customStyles.genericModalBtnText, { color: "#FFFFFF" }]}>Done</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            </View>
+                            </Modal>
+                        ):null
                     }
 
                     {/* draft and submit button  */}
